@@ -22,6 +22,7 @@ notes pinned on the sketch (numbered on the image):
 - [Privacy and security](#privacy-and-security)
 - [Troubleshooting](#troubleshooting)
 - [What's in this repo](#whats-in-this-repo)
+- [Releasing](#releasing)
 - [License](#license)
 
 ## Features
@@ -49,7 +50,7 @@ notes pinned on the sketch (numbered on the image):
 curl -fsSL https://raw.githubusercontent.com/humanikio/sketch-notes/main/install.sh | sh
 ```
 
-It checks for Claude Code, `ruby` and a Chromium browser, then installs both plugins for your user. All it runs is `claude plugin install`; [read it](install.sh) before you pipe it into `sh`. Options go after `sh -s --`:
+It checks for Claude Code, `ruby` and a Chromium browser, then installs both plugins for your user, or updates them if they are there. All it runs is `claude plugin` commands, plus one settings change with `--auto-update` (see [Updating](#updating)); [read it](install.sh) before you pipe it into `sh`. Options go after `sh -s --`:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/humanikio/sketch-notes/main/install.sh | sh -s -- --board-only
@@ -105,12 +106,27 @@ In `/config`, on the `sketch-notes-pane` row, or with `claude plugin configure s
 
 ## Updating
 
-Run the quick install again, or:
+Claude Code updates plugins by their version number, and it keeps marketplaces outside Anthropic's own (like this one) up to date only once you turn auto-update on. Pick one:
+
+**Turn on auto-update (recommended).** In Claude Code: `/plugin` › **Marketplaces** › **sketch-notes** › **Enable auto-update**. Or let the installer do it:
 
 ```sh
+curl -fsSL https://raw.githubusercontent.com/humanikio/sketch-notes/main/install.sh | sh -s -- --auto-update
+```
+
+That sets `"autoUpdate": true` on the `sketch-notes` entry under `extraKnownMarketplaces` in `~/.claude/settings.json`, after saving a backup beside it. From then on, a few minutes into a session Claude Code checks this repo, installs a new version in the background and says *Plugin updated · Run /reload-plugins to apply*; otherwise it loads on your next launch.
+
+**Update by hand.** Run the quick install again, or:
+
+```sh
+claude plugin marketplace update sketch-notes
 claude plugin update sketch-notes-pane@sketch-notes
 claude plugin update sketch-notes@sketch-notes
 ```
+
+then restart Claude Code (or `/reload-plugins`).
+
+**See what you have.** `claude plugin list` shows each installed version; the [changelog](CHANGELOG.md) says what changed in each.
 
 ## Uninstalling
 
@@ -149,6 +165,18 @@ A Claude Code marketplace with two plugins:
 | [`sketch-notes`](plugins/sketch-notes) | the skill, in Markdown only: how Claude reads a sketch, and when to suggest drawing one |
 
 [`install.sh`](install.sh) is the quick installer, and [`docs/canvas-spec.md`](docs/canvas-spec.md) the board's design.
+
+## Releasing
+
+Claude Code sees a new release by one thing: the `version` in a plugin's `.claude-plugin/plugin.json` on `main`. A push that leaves the version as it was reaches no one who has the plugin installed, and the version is set there only (never also in `marketplace.json`).
+
+1. Make the change, then run `claude plugin validate --strict plugins/<plugin>` and `claude plugin test plugins/sketch-notes-pane`.
+2. Bump `version` in that plugin's `plugin.json`: a patch (1.0.1) for fixes, a minor (1.1.0) for new features, a major (2.0.0) for anything that changes how people use it (a renamed command or setting).
+3. Add the version to [`CHANGELOG.md`](CHANGELOG.md).
+4. Push to `main`.
+5. Optionally, tag the release: `claude plugin tag plugins/<plugin> --push` creates `<plugin>--v<version>`. Tags are history and something to roll back to; updates don't read them.
+
+Never rename a plugin: its name is how every install finds it.
 
 ## License
 

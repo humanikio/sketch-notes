@@ -9,6 +9,8 @@
 #   --board-only        install the board without the skill
 #   --scope SCOPE       user (default), project or local
 #   --uninstall         remove both plugins and the marketplace (your sketches are kept)
+#   --auto-update       also turn on auto-update for this marketplace (sets "autoUpdate": true on its
+#                       entry in ~/.claude/settings.json, after a backup), so new versions arrive by themselves
 #   --dry-run           print what would run, change nothing
 #
 # all it runs is the `claude plugin` commands below; read them before you pipe this into sh.
@@ -19,6 +21,7 @@ NAME="sketch-notes"
 SCOPE="user"
 BOARD_ONLY=0
 UNINSTALL=0
+AUTO=0
 DRY=0
 
 while [ $# -gt 0 ]; do
@@ -28,6 +31,7 @@ while [ $# -gt 0 ]; do
     --scope=*) SCOPE="${1#--scope=}" ;;
     --uninstall) UNINSTALL=1 ;;
     --dry-run) DRY=1 ;;
+    --auto-update) AUTO=1 ;;
     -h|--help) sed -n '2,15p' "$0" 2>/dev/null || true; exit 0 ;;
     *) echo "sketch-notes: unknown option $1" >&2; exit 2 ;;
   esac
@@ -87,6 +91,29 @@ for p in $PLUGINS; do
     run claude plugin install "$p" --marketplace "$MARKETPLACE" --scope "$SCOPE"
   fi
 done
+
+# auto-update: off by default for marketplaces outside Anthropic's own, so only when asked
+SETTINGS="$HOME/.claude/settings.json"
+if [ "$AUTO" -eq 1 ]; then
+  if [ "$SCOPE" != "user" ]; then
+    warn "--auto-update sets your user settings; turn it on for a $SCOPE install in /plugin › Marketplaces instead."
+  elif ! command -v ruby >/dev/null 2>&1; then
+    warn "--auto-update needs ruby to edit $SETTINGS: turn it on in /plugin › Marketplaces › $NAME instead."
+  elif [ "$DRY" -eq 1 ]; then
+    say "would set \"autoUpdate\": true on extraKnownMarketplaces.$NAME in $SETTINGS (backup first)"
+  else
+    [ -f "$SETTINGS" ] && cp "$SETTINGS" "$SETTINGS.bak-sketch-notes"
+    ruby -rjson -e '
+      file, name, repo = ARGV
+      s = File.file?(file) && !File.read(file).strip.empty? ? JSON.parse(File.read(file)) : {}
+      m = (s["extraKnownMarketplaces"] ||= {})
+      e = (m[name] ||= { "source" => { "source" => "github", "repo" => repo } })
+      e["autoUpdate"] = true
+      File.write(file, JSON.pretty_generate(s) + "\n")
+    ' "$SETTINGS" "$NAME" "$MARKETPLACE"
+    say "Auto-update is on: new versions install in the background and load on your next launch (or /reload-plugins)."
+  fi
+fi
 
 say ""
 say "Done. Start Claude Code in any folder and run /sketch."
