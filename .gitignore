@@ -1,0 +1,6 @@
+push-notes.yaml
+.DS_Store
+# sketches and boards saved inside the repo while developing
+.claude/
+# type files Claude Code writes beside a mod it loads
+.claude-plugin/types/

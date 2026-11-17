@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sketch</title>
+<link rel="stylesheet" href="/static/board.css">
+</head>
+<body>
+<div id="top">
+  <span class="title">Sketch</span>
+  <button id="undo" title="Undo (⌘Z)">↶</button>
+  <button id="redo" title="Redo (⇧⌘Z)">↷</button>
+  <button id="zoom" title="Zoom">100% ▾</button>
+  <span class="grow"></span>
+  <span id="status"></span>
+  <span class="grow"></span>
+  <button id="addpage" class="accent" title="Put a live page of a local server on the board (W)">＋ Page <kbd>W</kbd></button>
+  <button id="shoot" title="Screenshot one of your open windows (S)">📸 Screenshot <kbd>S</kbd></button>
+  <button id="openimg" title="Add an image from a file (O). You can also drop or paste one.">🖼 Image <kbd>O</kbd></button>
+  <button id="boardmenu" title="Board">⋯</button>
+  <button id="full" title="Full screen (F)">⤢</button>
+</div>
+
+<div id="left">
+  <div class="tools">
+    <button data-tool="select" title="Comment and select (V): click to say what should change, drag to select">↖<kbd>V</kbd></button>
+    <button data-tool="pen" title="Pen (P)">✎<kbd>P</kbd></button>
+    <button data-tool="hl" title="Highlighter (H)">▮<kbd>H</kbd></button>
+    <button data-tool="arrow" title="Arrow (A)">↗<kbd>A</kbd></button>
+    <button data-tool="box" title="Box (B)">▢<kbd>B</kbd></button>
+    <button data-tool="erase" title="Eraser (E): drag over drawings to delete them">⌫<kbd>E</kbd></button>
+  </div>
+  <div class="sep"></div>
+  <div class="props">
+    <div id="swatches"></div>
+    <label title="Custom color"><input id="custom" type="color" value="#6e56cf"></label>
+    <div class="lbl">width</div>
+    <input id="width" type="range" min="1" max="40" value="4" title="Stroke width ([ and ])">
+    <div class="lbl">opacity</div>
+    <input id="opacity" type="range" min="10" max="100" value="100" title="Opacity">
+    <div id="propsfor" class="lbl dim">next drawing</div>
+  </div>
+</div>
+
+<div id="stage">
+  <canvas id="back"></canvas>
+  <div id="hit"></div>
+  <div id="pages"></div>
+  <canvas id="front"></canvas>
+  <div id="overlay">
+    <div id="pins"></div>
+    <div id="hl"><div class="tag"></div></div>
+    <div id="marq"></div>
+    <div id="selbox">
+      <div class="h" data-h="nw"></div><div class="h" data-h="n"></div><div class="h" data-h="ne"></div>
+      <div class="h" data-h="e"></div><div class="h" data-h="se"></div><div class="h" data-h="s"></div>
+      <div class="h" data-h="sw"></div><div class="h" data-h="w"></div>
+    </div>
+    <div id="seltools">
+      <button data-act="copy" title="Copy (⌘C)">Copy</button>
+      <button data-act="duplicate" title="Duplicate (⌘D)">Duplicate</button>
+      <button data-act="front" title="Bring forward">↑</button>
+      <button data-act="back" title="Send back">↓</button>
+      <button data-act="delete" class="danger" title="Delete (⌫)">Delete</button>
+    </div>
+  </div>
+  <div id="hint">Click anywhere to say <b>what should be changed here</b>.<br>
+    ＋ Page puts a live local server on the board · 📸 adds a window · drop or paste images<br>
+    Drawing tools are on the left.</div>
+  <div id="drop">Drop to add to the board</div>
+</div>
+
+<div id="bottom">
+  <input id="prompt" placeholder="What is this about? (optional, goes into your prompt with the sketch)" autocomplete="off">
+  <span id="sendinfo"></span>
+  <button id="cancel">Cancel</button>
+  <button id="attach" class="accent" title="Attach to prompt (⌘↵)">Attach to prompt <kbd>⌘↵</kbd></button>
+</div>
+
+<div id="pop"></div>
+
+<div class="modal" id="addmodal">
+  <div class="panel wide">
+    <div class="head">
+      <nav class="tabs">
+        <button data-tab="server" title="A live page of a local server (W)">🌐 Local server</button>
+        <button data-tab="shots" title="A screenshot of a window on screen (S)">📸 Screenshot</button>
+        <button data-tab="image" title="An image from a file, a drop or a paste (O)">🖼 Image</button>
+      </nav>
+      <span id="shots-sub" class="dim"></span>
+      <span class="grow"></span>
+      <button id="shots-refresh" title="Look again (R)">↻ Refresh</button>
+      <button data-close title="Go to the board (Esc)">✕</button>
+    </div>
+    <div class="tabpane" data-pane="server">
+      <div class="body">
+        <div class="dim small" id="servers-label">Looking for local servers…</div>
+        <div class="servers" id="servers"></div>
+        <div class="row">
+          <input id="pageurl" placeholder="or type a URL: http://localhost:3000/pricing" autocomplete="off" spellcheck="false">
+          <select id="pagesize">
+            <option value="desktop">Desktop 1440×900</option>
+            <option value="laptop">Laptop 1280×800</option>
+            <option value="tablet">Tablet 834×1112</option>
+            <option value="mobile">Mobile 390×844</option>
+          </select>
+          <button class="accent" id="pageadd">Add</button>
+        </div>
+        <div class="chips" id="recent"></div>
+        <div class="dim small" id="livehint"></div>
+      </div>
+    </div>
+    <div class="tabpane" data-pane="shots">
+      <div class="body" id="shots-body"></div>
+      <div class="tip">Not listed? Windows that are minimized or on another desktop don&#39;t show: bring it up and refresh.
+        Or use macOS&#39;s own: <kbd>⌃⇧⌘4</kbd> then <kbd>Space</kbd>, click a window, and paste it here with <kbd>⌘V</kbd>.</div>
+    </div>
+    <div class="tabpane" data-pane="image">
+      <div class="body">
+        <div class="dropzone" id="dropzone">
+          <div>Drop an image here, or paste one with <kbd>⌘V</kbd></div>
+          <button class="accent" id="choosefile">Choose a file…</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input id="file" type="file" accept="image/*,.heic,.heif,.tif,.tiff" multiple hidden>
+<div id="done"><div>✓ Attached to your prompt</div><small>you can close this window</small></div>
+
+<script>window.SKETCH = { token: '__TOKEN__', hasImage: __HAS_IMAGE__ }</script>
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>

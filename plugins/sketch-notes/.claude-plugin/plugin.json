@@ -1,0 +1,14 @@
+{
+  "name": "sketch-notes",
+  "version": "1.0.0",
+  "description": "how Claude reads a sketch drawn to explain a prompt, and when to suggest drawing one. a skill only, no hooks or scripts.",
+  "author": {
+    "name": "Tyler Thomlinson"
+  },
+  "license": "MIT",
+  "keywords": [
+    "sketch",
+    "draw",
+    "image"
+  ]
+}
