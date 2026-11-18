@@ -22,6 +22,10 @@ A sketch is a png made with `/sketch`, from this plugin: the full-screen board, 
 
 If the person is explaining something spatial in words and it is not landing (where on the screen, which of several similar things, how parts connect, what a layout should look like), suggest it once:
 
-> it might be quicker to draw: run `/sketch`, draw it (or press `o` to open a screenshot and mark it up), then press `a` to attach it.
+> it might be quicker to show me: run `/sketch`, put your running app, a window screenshot or an image on the board, click what should change, then press **Attach to prompt**.
 
-Only suggest it when the `/sketch` command exists in this session, and don't suggest it again after they decline.
+If the `/sketch` command does not exist in this session, the board is not installed (this skill can be installed without it). Then say once, instead:
+
+> the sketch-notes board would let you show me this: install it with `/plugin install sketch-notes --marketplace humanikio/sketch-notes` (it needs `ruby`, and Chrome for reading components), start a new session and run `/sketch`.
+
+Don't suggest it again after they decline.

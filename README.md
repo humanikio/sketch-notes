@@ -44,13 +44,24 @@ notes pinned on the sketch (numbered on the image):
 
 ## Installation
 
+### Which plugin?
+
+This repo is a Claude Code marketplace with two plugins. Install one of them, not both:
+
+| Plugin | What you get | Where from |
+|---|---|---|
+| **`sketch-notes`** (most people) | the `/sketch` board, and the skill that tells Claude how to read a sketch | this repo, with any of the three ways below |
+| `sketch-notes-skill` | the skill alone, Markdown only: Claude reads the sketches and annotated screenshots you attach, but there's no board | the Claude plugin directory, or this repo |
+
+The board runs programs on your Mac (`ruby`, Chrome, `lsof`; see [Privacy and security](#privacy-and-security)), so it installs from this repo rather than the directory. If you have `sketch-notes-skill` from the directory and want the board, install `sketch-notes` below: the quick install removes `sketch-notes-skill` for you, since `sketch-notes` has the same skill in it.
+
 ### Quick install
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/humanikio/sketch-notes/main/install.sh | sh
 ```
 
-It checks for Claude Code, `ruby` and a Chromium browser, then installs the plugin for your user, or updates it if it is there. All it runs is `claude plugin` commands, plus one settings change with `--auto-update` (see [Updating](#updating)); [read it](install.sh) before you pipe it into `sh`. Options go after `sh -s --`:
+It checks for Claude Code, `ruby` and a Chromium browser, then installs `sketch-notes` for your user, or updates it if it is there (and removes `sketch-notes-skill` or the old `sketch-notes-pane` if it finds them). All it runs is `claude plugin` commands, plus one settings change with `--auto-update` (see [Updating](#updating)); [read it](install.sh) before you pipe it into `sh`. Options go after `sh -s --`:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/humanikio/sketch-notes/main/install.sh | sh -s -- --scope project
@@ -64,7 +75,7 @@ At the prompt of a Claude Code session:
 /plugin install sketch-notes --marketplace humanikio/sketch-notes
 ```
 
-Answer `y` to add the marketplace, then pick a scope.
+Answer `y` to add the marketplace, then pick a scope. For the skill alone, use `sketch-notes-skill` in place of `sketch-notes`.
 
 ### From a shell
 
@@ -130,7 +141,7 @@ then restart Claude Code (or `/reload-plugins`).
 curl -fsSL https://raw.githubusercontent.com/humanikio/sketch-notes/main/install.sh | sh -s -- --uninstall
 ```
 
-or `claude plugin uninstall sketch-notes@sketch-notes`. Your sketches stay in `~/.claude/sketches`, and the board's browser profile in `~/.claude/sketch-notes`: delete those folders to remove them too.
+or `claude plugin uninstall sketch-notes@sketch-notes` (and `sketch-notes-skill`, if you have it). Your sketches stay in `~/.claude/sketches`, and the board's browser profile in `~/.claude/sketch-notes`: delete those folders to remove them too.
 
 ## Privacy and security
 
@@ -153,21 +164,27 @@ Everything it runs and reads is listed in [What it runs and sends](plugins/sketc
 
 ## What's in this repo
 
-A Claude Code marketplace with one plugin, [`sketch-notes`](plugins/sketch-notes): the `/sketch` board (`hooks/`, `scripts/`) and the skill that tells Claude how to read a sketch (`skills/read-sketches`).
+A Claude Code marketplace with two plugins:
+
+| Plugin | What it is |
+|---|---|
+| [`sketch-notes`](plugins/sketch-notes) | the `/sketch` board (`hooks/`, `scripts/`) and the skill (`skills/read-sketches`) |
+| [`sketch-notes-skill`](plugins/sketch-notes-skill) | the same skill on its own, the one listed in the Claude plugin directory |
 
 [`install.sh`](install.sh) is the quick installer, and [`docs/canvas-spec.md`](docs/canvas-spec.md) the board's design.
 
 ## Releasing
 
-Claude Code sees a new release by one thing: the `version` in `plugins/sketch-notes/.claude-plugin/plugin.json` on `main`. A push that leaves the version as it was reaches no one who has the plugin installed, and the version is set there only (never also in `marketplace.json`).
+Claude Code sees a new release by one thing: the `version` in a plugin's `.claude-plugin/plugin.json` on `main`. A push that leaves the version as it was reaches no one who has the plugin installed, and the version is set there only (never also in `marketplace.json`).
 
 1. Make the change, then run `claude plugin validate --strict plugins/sketch-notes` and `claude plugin test plugins/sketch-notes`.
-2. Bump `version` in `plugin.json`: a patch (1.0.1) for fixes, a minor (1.1.0) for new features, a major (2.0.0) for anything that changes how people use it (a renamed command or setting).
+   - The skill is in both plugins. Edit `plugins/sketch-notes/skills/read-sketches/SKILL.md`, copy it to `plugins/sketch-notes-skill/skills/read-sketches/SKILL.md`, and check they match with `cmp plugins/*/skills/read-sketches/SKILL.md`. Then run `claude plugin validate --profile directory plugins/sketch-notes-skill`.
+2. Bump `version` in the `plugin.json` of each plugin you changed (both, for a skill change): a patch (1.0.1) for fixes, a minor (1.1.0) for new features, a major (2.0.0) for anything that changes how people use it (a renamed command or setting).
 3. Add the version to [`CHANGELOG.md`](CHANGELOG.md).
-4. Push to `main`.
-5. Optionally, tag the release: `claude plugin tag plugins/sketch-notes --push` creates `sketch-notes--v<version>`. Tags are history and something to roll back to; updates don't read them.
+4. Push to `main`. The directory picks up `sketch-notes-skill` from `main` within about 6 hours (minutes, once the Claude GitHub App is connected on its directory page) and scans it before it goes live.
+5. Optionally, tag the release: `claude plugin tag plugins/<plugin> --push` creates `<plugin>--v<version>`. Tags are history and something to roll back to; updates don't read them.
 
-Never rename the plugin: its name is how every install finds it.
+Never rename a plugin: its name is how every install finds it.
 
 ## License
 

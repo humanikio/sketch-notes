@@ -1,6 +1,15 @@
 # Changelog
 
-The version is set in `plugins/sketch-notes/.claude-plugin/plugin.json`. Claude Code updates an installed plugin when that version changes.
+Each plugin has its own version, set in its `.claude-plugin/plugin.json`. Claude Code updates an installed plugin when that version changes.
+
+## sketch-notes 2.0.1 · 2026-11-18
+
+- The skill suggests the board in the board's own terms (pick an app, a screenshot or an image, click what should change, attach), and when `/sketch` isn't installed it says once how to get it.
+- The quick install removes `sketch-notes-skill` if it finds it, since `sketch-notes` has the same skill in it.
+
+## sketch-notes-skill 1.0.0 · 2026-11-18
+
+The skill on its own, Markdown only, for the Claude plugin directory. It is the same `read-sketches` skill as in `sketch-notes`.
 
 ## sketch-notes 2.0.0 · 2026-11-17
 

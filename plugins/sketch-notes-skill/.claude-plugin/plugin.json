@@ -1,0 +1,17 @@
+{
+  "name": "sketch-notes-skill",
+  "version": "1.0.0",
+  "description": "how Claude reads a sketch or annotated screenshot you attach to a prompt, and when to suggest drawing one. Markdown only; the /sketch board that makes sketches is the sketch-notes plugin.",
+  "author": {
+    "name": "Tyler Thomlinson"
+  },
+  "homepage": "https://github.com/humanikio/sketch-notes",
+  "repository": "https://github.com/humanikio/sketch-notes",
+  "license": "MIT",
+  "keywords": [
+    "sketch",
+    "annotate",
+    "screenshot",
+    "design-review"
+  ]
+}

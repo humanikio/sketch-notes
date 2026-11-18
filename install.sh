@@ -7,7 +7,7 @@
 #
 # options:
 #   --scope SCOPE       user (default), project or local
-#   --uninstall         remove the plugin and the marketplace (your sketches are kept)
+#   --uninstall         remove sketch-notes (and sketch-notes-skill) and the marketplace (your sketches are kept)
 #   --auto-update       also turn on auto-update for this marketplace (sets "autoUpdate": true on its
 #                       entry in ~/.claude/settings.json, after a backup), so new versions arrive by themselves
 #   --dry-run           print what would run, change nothing
@@ -51,7 +51,7 @@ if ! command -v claude >/dev/null 2>&1; then
 fi
 
 if [ "$UNINSTALL" -eq 1 ]; then
-  for p in sketch-notes-pane sketch-notes; do
+  for p in sketch-notes-pane sketch-notes-skill sketch-notes; do
     if claude plugin list 2>/dev/null | grep -q "$p@$NAME"; then
       run claude plugin uninstall "$p@$NAME" --scope "$SCOPE" || run claude plugin uninstall "$p@$NAME"
     fi
@@ -81,6 +81,13 @@ fi
 if claude plugin list 2>/dev/null | grep -q "sketch-notes-pane@$NAME"; then
   say "Removing sketch-notes-pane (the board is part of sketch-notes now)…"
   run claude plugin uninstall "sketch-notes-pane@$NAME" --scope "$SCOPE" || run claude plugin uninstall "sketch-notes-pane@$NAME" || true
+fi
+
+# sketch-notes has the skill in it, so the skill-only plugin (from the directory or this marketplace) would be a second copy
+old=$(claude plugin list 2>/dev/null | grep -o "sketch-notes-skill@[A-Za-z0-9._-]*" | head -1 || true)
+if [ -n "$old" ]; then
+  say "Removing $old (sketch-notes has the same skill in it)…"
+  run claude plugin uninstall "$old" --scope "$SCOPE" || run claude plugin uninstall "$old" || true
 fi
 
 if claude plugin list 2>/dev/null | grep -q "$NAME@$NAME"; then
