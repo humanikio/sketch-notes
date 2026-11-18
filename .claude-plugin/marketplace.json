@@ -8,12 +8,7 @@
     {
       "name": "sketch-notes",
       "source": "./plugins/sketch-notes",
-      "description": "the skill: how Claude reads a sketch and when to suggest one, in Markdown only"
-    },
-    {
-      "name": "sketch-notes-pane",
-      "source": "./plugins/sketch-notes-pane",
-      "description": "the /sketch board: live local pages, screenshots and images, notes on components with their source lines, attach to prompt"
+      "description": "the /sketch board: live local pages, screenshots and images, notes on components with their source lines, attached to your prompt, plus the skill for reading them"
     }
   ]
 }

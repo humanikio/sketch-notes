@@ -1,7 +1,7 @@
 import { expect, test } from 'claude-code/testing'
 
 const PANE = {
-  plugin: 'sketch-notes-pane',
+  plugin: 'sketch-notes',
   component: 'Pane',
   requestId: 'sketch',
   props: {

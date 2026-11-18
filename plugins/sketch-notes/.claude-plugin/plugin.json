@@ -1,14 +1,38 @@
 {
   "name": "sketch-notes",
-  "version": "1.0.0",
-  "description": "how Claude reads a sketch drawn to explain a prompt, and when to suggest drawing one. a skill only, no hooks or scripts.",
+  "version": "2.0.0",
+  "description": "/sketch: a full-screen board for your running local apps, window screenshots and images. Click anything to say what should change: a note on a live page names its component, source file and line. Attach it all to your prompt, and a skill tells Claude how to read it.",
   "author": {
     "name": "Tyler Thomlinson"
   },
   "license": "MIT",
   "keywords": [
     "sketch",
-    "draw",
-    "image"
-  ]
+    "annotate",
+    "screenshot",
+    "local-dev",
+    "react",
+    "components",
+    "design-review",
+    "draw"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "opens": {
+      "type": "string",
+      "title": "Where /sketch opens",
+      "description": "window: a full-screen canvas in a browser app window (a Chrome-family browser when installed, else your default browser). pane: the canvas inside the terminal. /sketch pane or /sketch window picks one for a single run.",
+      "default": "window",
+      "options": [
+        "window",
+        "pane"
+      ]
+    },
+    "folder": {
+      "type": "string",
+      "title": "Where sketches are saved",
+      "description": "The folder attached sketches (and the board) are kept in: ~/.claude/sketches by default, outside every project so they are never committed. Relative paths are taken from the folder Claude Code runs in.",
+      "default": "~/.claude/sketches"
+    }
+  }
 }

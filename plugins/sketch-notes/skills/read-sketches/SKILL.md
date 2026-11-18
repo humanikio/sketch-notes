@@ -5,7 +5,7 @@ description: How to read a sketch the person drew to explain a prompt, and when 
 
 # Reading sketches
 
-A sketch is a png the person drew with the mouse in the `/sketch` pane of the `sketch-notes-pane` plugin. It is attached to the prompt as an `@` mention of a file, by default under `.claude/sketches/` in the working folder. It is either:
+A sketch is a png made with `/sketch`, from this plugin: the full-screen board, or the canvas in the terminal with `/sketch pane`. It is attached to the prompt as an `@` mention of a file, by default under `~/.claude/sketches/`. A sketch from the board also comes with a list of the pages on it and the notes pinned to it (each naming the component, source file and line it points at): go to those files and lines first. It is either:
 
 - **ink on a blank white canvas**: boxes, arrows, flows, a rough layout, or
 - **ink over an image they loaded**: a screenshot, a mockup or a photo, with marks on top that point at what they mean.

@@ -1,6 +1,13 @@
 # Changelog
 
-Each plugin has its own version, set in its `.claude-plugin/plugin.json`. Claude Code updates an installed plugin when that version changes.
+The version is set in `plugins/sketch-notes/.claude-plugin/plugin.json`. Claude Code updates an installed plugin when that version changes.
+
+## sketch-notes 2.0.0 · 2026-11-17
+
+The board and the skill are one plugin now, `sketch-notes`. `sketch-notes-pane` is gone.
+
+- If you had `sketch-notes-pane`, uninstall it (`claude plugin uninstall sketch-notes-pane@sketch-notes`) and install or update `sketch-notes`, or run the quick install again, which does both.
+- Settings move to the `sketch-notes` row: set `opens` and `folder` again there if you had changed them. Your sketches and board stay where they were.
 
 ## sketch-notes-pane 1.0.0 · 2026-11-17
 

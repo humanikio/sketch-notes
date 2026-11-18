@@ -50,10 +50,9 @@ notes pinned on the sketch (numbered on the image):
 curl -fsSL https://raw.githubusercontent.com/humanikio/sketch-notes/main/install.sh | sh
 ```
 
-It checks for Claude Code, `ruby` and a Chromium browser, then installs both plugins for your user, or updates them if they are there. All it runs is `claude plugin` commands, plus one settings change with `--auto-update` (see [Updating](#updating)); [read it](install.sh) before you pipe it into `sh`. Options go after `sh -s --`:
+It checks for Claude Code, `ruby` and a Chromium browser, then installs the plugin for your user, or updates it if it is there. All it runs is `claude plugin` commands, plus one settings change with `--auto-update` (see [Updating](#updating)); [read it](install.sh) before you pipe it into `sh`. Options go after `sh -s --`:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/humanikio/sketch-notes/main/install.sh | sh -s -- --board-only
 curl -fsSL https://raw.githubusercontent.com/humanikio/sketch-notes/main/install.sh | sh -s -- --scope project
 ```
 
@@ -62,16 +61,14 @@ curl -fsSL https://raw.githubusercontent.com/humanikio/sketch-notes/main/install
 At the prompt of a Claude Code session:
 
 ```
-/plugin install sketch-notes-pane --marketplace humanikio/sketch-notes
 /plugin install sketch-notes --marketplace humanikio/sketch-notes
 ```
 
-Answer `y` to add the marketplace, then pick a scope. The second line, the skill, is optional.
+Answer `y` to add the marketplace, then pick a scope.
 
 ### From a shell
 
 ```sh
-claude plugin install sketch-notes-pane --marketplace humanikio/sketch-notes
 claude plugin install sketch-notes --marketplace humanikio/sketch-notes
 ```
 
@@ -93,11 +90,11 @@ claude plugin install sketch-notes --marketplace humanikio/sketch-notes
 | ⌘C ⌘V ⌘D ⌫ ⌘Z | copy, paste, duplicate, delete, undo |
 | pinch, ⇧1, ⇧2 | zoom, fit all, zoom to the selection |
 
-`/sketch path/to/image.png` starts with an image; `/sketch pane` draws in the terminal instead. The full guide is in the [board's README](plugins/sketch-notes-pane/README.md).
+`/sketch path/to/image.png` starts with an image; `/sketch pane` draws in the terminal instead. The full guide is in the [plugin's README](plugins/sketch-notes/README.md).
 
 ## Configuration
 
-In `/config`, on the `sketch-notes-pane` row, or with `claude plugin configure sketch-notes-pane@sketch-notes`:
+In `/config`, on the `sketch-notes` row, or with `claude plugin configure sketch-notes@sketch-notes`:
 
 | Setting | Default | What it is |
 |---|---|---|
@@ -120,7 +117,6 @@ That sets `"autoUpdate": true` on the `sketch-notes` entry under `extraKnownMark
 
 ```sh
 claude plugin marketplace update sketch-notes
-claude plugin update sketch-notes-pane@sketch-notes
 claude plugin update sketch-notes@sketch-notes
 ```
 
@@ -134,7 +130,7 @@ then restart Claude Code (or `/reload-plugins`).
 curl -fsSL https://raw.githubusercontent.com/humanikio/sketch-notes/main/install.sh | sh -s -- --uninstall
 ```
 
-or `claude plugin uninstall sketch-notes-pane@sketch-notes` and `claude plugin uninstall sketch-notes@sketch-notes`. Your sketches stay in `~/.claude/sketches`, and the board's browser profile in `~/.claude/sketch-notes`: delete those folders to remove them too.
+or `claude plugin uninstall sketch-notes@sketch-notes`. Your sketches stay in `~/.claude/sketches`, and the board's browser profile in `~/.claude/sketch-notes`: delete those folders to remove them too.
 
 ## Privacy and security
 
@@ -143,7 +139,7 @@ or `claude plugin uninstall sketch-notes-pane@sketch-notes` and `claude plugin u
 - To find source lines, it reads the source files of the local dev servers you put on the board. It never writes to your projects.
 - A sketch reaches Claude only when you send the prompt that mentions it.
 
-Everything it runs and reads is listed in [What it runs and sends](plugins/sketch-notes-pane/README.md#what-it-runs-and-sends).
+Everything it runs and reads is listed in [What it runs and sends](plugins/sketch-notes/README.md#what-it-runs-and-sends).
 
 ## Troubleshooting
 
@@ -157,26 +153,21 @@ Everything it runs and reads is listed in [What it runs and sends](plugins/sketc
 
 ## What's in this repo
 
-A Claude Code marketplace with two plugins:
-
-| Plugin | What it is |
-|---|---|
-| [`sketch-notes-pane`](plugins/sketch-notes-pane) | the `/sketch` board |
-| [`sketch-notes`](plugins/sketch-notes) | the skill, in Markdown only: how Claude reads a sketch, and when to suggest drawing one |
+A Claude Code marketplace with one plugin, [`sketch-notes`](plugins/sketch-notes): the `/sketch` board (`hooks/`, `scripts/`) and the skill that tells Claude how to read a sketch (`skills/read-sketches`).
 
 [`install.sh`](install.sh) is the quick installer, and [`docs/canvas-spec.md`](docs/canvas-spec.md) the board's design.
 
 ## Releasing
 
-Claude Code sees a new release by one thing: the `version` in a plugin's `.claude-plugin/plugin.json` on `main`. A push that leaves the version as it was reaches no one who has the plugin installed, and the version is set there only (never also in `marketplace.json`).
+Claude Code sees a new release by one thing: the `version` in `plugins/sketch-notes/.claude-plugin/plugin.json` on `main`. A push that leaves the version as it was reaches no one who has the plugin installed, and the version is set there only (never also in `marketplace.json`).
 
-1. Make the change, then run `claude plugin validate --strict plugins/<plugin>` and `claude plugin test plugins/sketch-notes-pane`.
-2. Bump `version` in that plugin's `plugin.json`: a patch (1.0.1) for fixes, a minor (1.1.0) for new features, a major (2.0.0) for anything that changes how people use it (a renamed command or setting).
+1. Make the change, then run `claude plugin validate --strict plugins/sketch-notes` and `claude plugin test plugins/sketch-notes`.
+2. Bump `version` in `plugin.json`: a patch (1.0.1) for fixes, a minor (1.1.0) for new features, a major (2.0.0) for anything that changes how people use it (a renamed command or setting).
 3. Add the version to [`CHANGELOG.md`](CHANGELOG.md).
 4. Push to `main`.
-5. Optionally, tag the release: `claude plugin tag plugins/<plugin> --push` creates `<plugin>--v<version>`. Tags are history and something to roll back to; updates don't read them.
+5. Optionally, tag the release: `claude plugin tag plugins/sketch-notes --push` creates `sketch-notes--v<version>`. Tags are history and something to roll back to; updates don't read them.
 
-Never rename a plugin: its name is how every install finds it.
+Never rename the plugin: its name is how every install finds it.
 
 ## License
 

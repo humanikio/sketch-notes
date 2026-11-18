@@ -1,7 +1,7 @@
 # Sketch canvas v2: spec
 
 Status: built (milestones 1–3) · 2026-11-17
-Scope: `plugins/sketch-notes-pane/scripts/window.html` (rewritten), `window.rb` and `inspect.rb` (extended), `hooks/register.tsx` (attach output)
+Scope: `plugins/sketch-notes/scripts/window.html` (rewritten), `window.rb` and `inspect.rb` (extended), `hooks/register.tsx` (attach output)
 
 ## 1. Why
 

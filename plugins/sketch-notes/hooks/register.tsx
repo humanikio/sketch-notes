@@ -4,16 +4,16 @@ import type { EngineInterface, Register } from 'claude-code'
 import type { Background, Browse, BrowseEntry, CanvasMessage, CanvasProps, Mode, Stroke } from '../types'
 
 const PANE = 'sketch'
-const strokes = atom({ plugin: 'sketch-notes-pane', key: 'strokes' } as const, [], { shape: 'strokes-1' })
-const cleared = atom({ plugin: 'sketch-notes-pane', key: 'cleared' } as const, [], { shape: 'strokes-1' })
-const rev = atom({ plugin: 'sketch-notes-pane', key: 'rev' } as const, 0)
-const color = atom({ plugin: 'sketch-notes-pane', key: 'color' } as const, '#111111')
-const size = atom({ plugin: 'sketch-notes-pane', key: 'size' } as const, 2)
-const background = atom({ plugin: 'sketch-notes-pane', key: 'background' } as const, null, { shape: 'background-1' })
-const mode = atom({ plugin: 'sketch-notes-pane', key: 'mode' } as const, 'draw' as Mode)
-const browse = atom({ plugin: 'sketch-notes-pane', key: 'browse' } as const, null, { shape: 'browse-1' })
-const status = atom({ plugin: 'sketch-notes-pane', key: 'status' } as const, '')
-const sketches = atom({ plugin: 'sketch-notes-pane', key: 'sketches' } as const, [] as string[])
+const strokes = atom({ plugin: 'sketch-notes', key: 'strokes' } as const, [], { shape: 'strokes-1' })
+const cleared = atom({ plugin: 'sketch-notes', key: 'cleared' } as const, [], { shape: 'strokes-1' })
+const rev = atom({ plugin: 'sketch-notes', key: 'rev' } as const, 0)
+const color = atom({ plugin: 'sketch-notes', key: 'color' } as const, '#111111')
+const size = atom({ plugin: 'sketch-notes', key: 'size' } as const, 2)
+const background = atom({ plugin: 'sketch-notes', key: 'background' } as const, null, { shape: 'background-1' })
+const mode = atom({ plugin: 'sketch-notes', key: 'mode' } as const, 'draw' as Mode)
+const browse = atom({ plugin: 'sketch-notes', key: 'browse' } as const, null, { shape: 'browse-1' })
+const status = atom({ plugin: 'sketch-notes', key: 'status' } as const, '')
+const sketches = atom({ plugin: 'sketch-notes', key: 'sketches' } as const, [] as string[])
 
 type Engine = EngineInterface
 

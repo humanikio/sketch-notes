@@ -45,7 +45,7 @@ export type CanvasMessage = { type: 'stroke'; stroke: Stroke } | { type: 'undo' 
 
 declare module 'claude-code' {
   interface PluginState {
-    'sketch-notes-pane': {
+    'sketch-notes': {
       strokes: Shaped<Stroke[]>
       cleared: Shaped<Stroke[]>
       rev: number

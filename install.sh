@@ -1,14 +1,13 @@
 #!/bin/sh
 # sketch-notes installer: adds the humanikio/sketch-notes marketplace to Claude Code and installs
-# the /sketch board (sketch-notes-pane) and the skill (sketch-notes). Running it again updates them.
+# sketch-notes: the /sketch board and the skill that reads it. Running it again updates it.
 #
 #   curl -fsSL https://raw.githubusercontent.com/humanikio/sketch-notes/main/install.sh | sh
 #   curl -fsSL https://raw.githubusercontent.com/humanikio/sketch-notes/main/install.sh | sh -s -- --uninstall
 #
 # options:
-#   --board-only        install the board without the skill
 #   --scope SCOPE       user (default), project or local
-#   --uninstall         remove both plugins and the marketplace (your sketches are kept)
+#   --uninstall         remove the plugin and the marketplace (your sketches are kept)
 #   --auto-update       also turn on auto-update for this marketplace (sets "autoUpdate": true on its
 #                       entry in ~/.claude/settings.json, after a backup), so new versions arrive by themselves
 #   --dry-run           print what would run, change nothing
@@ -19,20 +18,19 @@ set -eu
 MARKETPLACE="humanikio/sketch-notes"
 NAME="sketch-notes"
 SCOPE="user"
-BOARD_ONLY=0
 UNINSTALL=0
 AUTO=0
 DRY=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --board-only) BOARD_ONLY=1 ;;
+    --board-only) ;; # older option: the board and the skill are one plugin now
     --scope) shift; SCOPE="${1:-user}" ;;
     --scope=*) SCOPE="${1#--scope=}" ;;
     --uninstall) UNINSTALL=1 ;;
     --dry-run) DRY=1 ;;
     --auto-update) AUTO=1 ;;
-    -h|--help) sed -n '2,15p' "$0" 2>/dev/null || true; exit 0 ;;
+    -h|--help) sed -n '2,14p' "$0" 2>/dev/null || true; exit 0 ;;
     *) echo "sketch-notes: unknown option $1" >&2; exit 2 ;;
   esac
   shift
@@ -51,9 +49,6 @@ if ! command -v claude >/dev/null 2>&1; then
   say "Install it first: https://claude.com/claude-code, then run this again."
   exit 1
 fi
-
-PLUGINS="sketch-notes-pane"
-[ "$BOARD_ONLY" -eq 1 ] || PLUGINS="$PLUGINS sketch-notes"
 
 if [ "$UNINSTALL" -eq 1 ]; then
   for p in sketch-notes-pane sketch-notes; do
@@ -82,15 +77,20 @@ else
 fi
 [ -n "$browser" ] || warn "no Chrome, Brave, Edge or Chromium found: the board opens in your default browser, and live pages show without their components."
 
-for p in $PLUGINS; do
-  if claude plugin list 2>/dev/null | grep -q "$p@$NAME"; then
-    say "Updating ${p}…"
-    run claude plugin update "$p@$NAME"
-  else
-    say "Installing ${p}…"
-    run claude plugin install "$p" --marketplace "$MARKETPLACE" --scope "$SCOPE"
-  fi
-done
+# before 2.0.0 the board was a second plugin, sketch-notes-pane: it is part of sketch-notes now
+if claude plugin list 2>/dev/null | grep -q "sketch-notes-pane@$NAME"; then
+  say "Removing sketch-notes-pane (the board is part of sketch-notes now)…"
+  run claude plugin uninstall "sketch-notes-pane@$NAME" --scope "$SCOPE" || run claude plugin uninstall "sketch-notes-pane@$NAME" || true
+fi
+
+if claude plugin list 2>/dev/null | grep -q "$NAME@$NAME"; then
+  say "Updating ${NAME}…"
+  run claude plugin marketplace update "$NAME" || true
+  run claude plugin update "$NAME@$NAME"
+else
+  say "Installing ${NAME}…"
+  run claude plugin install "$NAME" --marketplace "$MARKETPLACE" --scope "$SCOPE"
+fi
 
 # auto-update: off by default for marketplaces outside Anthropic's own, so only when asked
 SETTINGS="$HOME/.claude/settings.json"
